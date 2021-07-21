@@ -5,30 +5,31 @@ from scipy import sparse
 
 
 class Binary_OHE(TransformerMixin, BaseEstimator):
-    """Wrapper for creating True/False encoding"""
+    """Wrapper for Binary OHE"""
 
-    def __init__(self):
-        
+    def __init__(self, delimiter):
+        self.delimiter = delimiter
         self.vocab = {}
         self.n_features = None
 
-    def fit(self, X):
+    def fit(self, x_train):
         values = []
-        for text in X:
-            values += text.split(',')
+        for text in x_train:
+            values += text.split(self.delimiter)
 
         all_features = set(values)
         self.vocab = {feature: i for i, feature in enumerate(all_features)}
+        self.n_features = len(self.vocab.keys())
         return self
 
-    def transform(self, X):
-        self.n_features = len(self.vocab.keys())
-        encodings = np.array([[0] * self.n_features for _ in range(len(X))])
-        for i, text in enumerate(X):
-            for feature in text.split(':'):
+    def transform(self, x_train):
+        encodings = np.array([[0] * self.n_features for _ in range(len(x_train))])
+        for i, text in enumerate(x_train):
+            for feature in text.split(self.delimiter):
                 idx = self.vocab.get(feature)
                 encodings[i][idx] = 1
         return sparse.csr_matrix(encodings)
 
-    def fit_transform(self, X, y=None):
-        return self.fit(X).transform(X)
+    def fit_transform(self, x_train, y=None):
+        return self.fit(x_train).transform(x_train)
+
