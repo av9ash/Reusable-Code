@@ -7,12 +7,21 @@ from scipy import sparse
 class Binary_OHE(TransformerMixin, BaseEstimator):
     """Wrapper for Binary OHE"""
 
-    def __init__(self, delimiter):
+    def __init__(self, delimiter=','):
+        """
+
+        :param delimiter: Delimiter to split features, strip() not applied on features. Comma is default.
+        """
         self.delimiter = delimiter
         self.vocab = {}
         self.n_features = None
 
     def fit(self, x_train):
+        """
+
+        :param x_train: List of strings containing comma seperated features.
+        :return: self
+        """
         values = []
         for text in x_train:
             values += text.split(self.delimiter)
@@ -23,6 +32,11 @@ class Binary_OHE(TransformerMixin, BaseEstimator):
         return self
 
     def transform(self, x_train):
+        """
+
+        :param x_train: List of strings containing comma seperated features.
+        :return: sparse csr matrix
+        """
         encodings = np.array([[0] * self.n_features for _ in range(len(x_train))])
         for i, text in enumerate(x_train):
             for feature in text.split(self.delimiter):
@@ -31,5 +45,11 @@ class Binary_OHE(TransformerMixin, BaseEstimator):
         return sparse.csr_matrix(encodings)
 
     def fit_transform(self, x_train, y=None):
+        """
+        Calls fit then calls transform.
+        :param x_train: List of strings containing comma seperated features.
+        :return: sparse csr matrix
+        """
         return self.fit(x_train).transform(x_train)
+
 
