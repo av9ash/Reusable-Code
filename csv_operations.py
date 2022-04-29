@@ -29,10 +29,14 @@ def write_dict_to_csv(column_names, data, filename):
 
 def update_rows_in_csv(column_names, data, filename):
     if os.path.exists(filename):
+        # Create a new temporary CSV file
         tempfile = NamedTemporaryFile(mode='w', delete=False)
+
+        # Read values from existing CSV file
         with open(filename, 'r') as csvfile, tempfile:
             reader = csv.DictReader(csvfile, fieldnames=column_names)
             writer = csv.DictWriter(tempfile, fieldnames=column_names)
+            # Update and write rows to the temporary file
             for row in reader:
                 # # Code to update values here
                 # row = {'column1': row['column1'], 'column2': row['column2'],
@@ -40,6 +44,7 @@ def update_rows_in_csv(column_names, data, filename):
                 #        'column5': row['column5'], 'column6': row['column6'], 'column7': row['column7']}
                 writer.writerow(row)
 
+        # Replace original file with temporary file
         shutil.move(tempfile.name, filename)
     else:
         print('File to update does not exist.')
