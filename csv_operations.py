@@ -4,6 +4,15 @@ from tempfile import NamedTemporaryFile
 import shutil
 
 
+def read_csv(filename):
+    rows = []
+    with open(filename) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            rows.append(row)
+    return rows
+
+
 def write_headers_to_csv(column_names, target_file):
     # If file doesn't exist create a new one and add headers to file.
     if not os.path.exists(target_file):
