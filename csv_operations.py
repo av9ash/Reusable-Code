@@ -4,9 +4,14 @@ from tempfile import NamedTemporaryFile
 import shutil
 
 
-def read_csv(filename):
+def read_csv(target_file):
+    """
+    Read rows from csv file.
+    :param target_file: path where file is saved
+    :return: list
+    """
     rows = []
-    with open(filename) as csvfile:
+    with open(target_file) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             rows.append(row)
@@ -14,6 +19,12 @@ def read_csv(filename):
 
 
 def write_headers_to_csv(column_names, target_file):
+    """
+    Write column names to target csv file.
+    :param column_names: list of column headers
+    :param target_file: path where file is saved
+    :return: None
+    """
     # If file doesn't exist create a new one and add headers to file.
     if not os.path.exists(target_file):
         with open(target_file, 'w', newline='') as csvfile:
@@ -22,27 +33,48 @@ def write_headers_to_csv(column_names, target_file):
 
 
 def write_row_to_csv(column_names, row_data, target_file):
+    """
+    Write one row of data to target file
+    :param column_names: list of column headers
+    :param row_data: data dictionary
+    :param target_file: path where file is saved
+    :return: None
+    """
     # Add a new row
     with open(target_file, 'a+', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=column_names)
         writer.writerow(row_data)
 
 
-def write_dict_to_csv(column_names, data, filename):
+def write_dict_to_csv(column_names, data, target_file):
+    """
+    Write rows of data to target file
+    :param column_names: list of column headers
+    :param data: list of data dictionary
+    :param target_file: path where file is saved
+    :return: None
+    """
     # Add data each in a new row
-    with open(filename, 'a+', newline='') as csvfile:
+    with open(target_file, 'a+', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=column_names)
         for row_data in data:
             writer.writerow(row_data)
 
 
-def update_rows_in_csv(column_names, data, filename):
-    if os.path.exists(filename):
+def update_rows_in_csv(column_names, data, target_file):
+    """
+    Update existing rows in csv file
+    :param column_names: list of column headers
+    :param data: list of data dictionary
+    :param target_file: path where file is saved
+    :return: None
+    """
+    if os.path.exists(target_file):
         # Create a new temporary CSV file
         tempfile = NamedTemporaryFile(mode='w', delete=False)
 
         # Read values from existing CSV file
-        with open(filename, 'r') as csvfile, tempfile:
+        with open(target_file, 'r') as csvfile, tempfile:
             reader = csv.DictReader(csvfile, fieldnames=column_names)
             writer = csv.DictWriter(tempfile, fieldnames=column_names)
             # Update and write rows to the temporary file
@@ -54,6 +86,6 @@ def update_rows_in_csv(column_names, data, filename):
                 writer.writerow(row)
 
         # Replace original file with temporary file
-        shutil.move(tempfile.name, filename)
+        shutil.move(tempfile.name, target_file)
     else:
         print('File to update does not exist.')
