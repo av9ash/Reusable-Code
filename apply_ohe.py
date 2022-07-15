@@ -8,7 +8,6 @@ class Platform_OHE(TransformerMixin, BaseEstimator):
     """Wrapper for using annoy.AnnoyIndex as sklearn's KNeighborsTransformer"""
 
     def __init__(self):
-        self.le = LabelEncoder()
         self.vocab = {}
 
     def fit(self, X):
@@ -19,7 +18,6 @@ class Platform_OHE(TransformerMixin, BaseEstimator):
         all_features = set(values)
         self.vocab = {feature: i for i, feature in enumerate(all_features)}
 
-        # self.le.fit(values)
         return self
 
     def transform(self, X):
